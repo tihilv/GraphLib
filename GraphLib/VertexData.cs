@@ -6,23 +6,24 @@ namespace GraphLib
 {
     public class VertexData : IEquatable<VertexData>
     {
-        readonly IVertex _vertex;
-        private readonly IEdgeKeeper _outcomeEdges;
-        private readonly IEdgeKeeper _incomeEdges;
+        static Edge[] _emptyEdges = new Edge[0];
+
+        private readonly IVertex _vertex;
+        private readonly EdgeKeepingFactory _edgeKeepingFactory;
+        private IEdgeKeeper _outcomeEdges;
+        private IEdgeKeeper _incomeEdges;
 
         public VertexData(IVertex vertex, EdgeKeepingFactory edgeKeepingFactory)
         {
             _vertex = vertex;
-            _outcomeEdges = edgeKeepingFactory.Create();
-            _incomeEdges = edgeKeepingFactory.Create();
+            _edgeKeepingFactory = edgeKeepingFactory;
+
+            _outcomeEdges = null;
+            _incomeEdges = null;
         }
 
         public IVertex Vertex => _vertex;
-
-        public IEdgeKeeper OutcomeEdges => _outcomeEdges;
-
-        public IEdgeKeeper IncomeEdges => _incomeEdges;
-
+        
         public string Name => _vertex.Name;
 
         public bool Equals(VertexData other)
@@ -85,5 +86,47 @@ namespace GraphLib
         }
 
         public static IEqualityComparer<VertexData> VertexDataComparer { get; } = new VertexDataEqualityComparer();
+
+        public void RemoveOutcomeEdge(Edge edge)
+        {
+            _outcomeEdges.Remove(edge);
+        }
+
+        public void RemoveIncomeEdge(Edge edge)
+        {
+            _incomeEdges.Remove(edge);
+        }
+
+        public void AddOutcomeEdge(Edge edge)
+        {
+            if (_outcomeEdges == null)
+                _outcomeEdges = _edgeKeepingFactory.Create();
+
+            _outcomeEdges.Add(edge);
+        }
+
+        public void AddIncomeEdge(Edge edge)
+        {
+            if (_incomeEdges == null)
+                _incomeEdges = _edgeKeepingFactory.Create();
+
+            _incomeEdges.Add(edge);
+        }
+
+        public IEnumerable<Edge> GetOutcomeEdges()
+        {
+            if (_outcomeEdges == null)
+                return _emptyEdges;
+
+            return _outcomeEdges.GetEdges();
+        }
+
+        public IEnumerable<Edge> GetIncomeEdges()
+        {
+            if (_incomeEdges == null)
+                return _emptyEdges;
+
+            return _incomeEdges.GetEdges();
+        }
     }
 }

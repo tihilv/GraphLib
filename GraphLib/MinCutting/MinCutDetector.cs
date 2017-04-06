@@ -32,11 +32,11 @@ namespace GraphLib.MinCutting
 
             while (g.Vertices.Length > 2)
             {
-                var e = g.Edges[_random.Next(0, g.Edges.Count)];
+                var e = g.Edges[_random.Next(0, g.Edges.Length)];
                 g.Merge(e.Tail, e.Head);
             }
 
-            return g.Edges.Count;
+            return g.Edges.Length;
         }
 
     }

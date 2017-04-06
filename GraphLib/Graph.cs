@@ -13,7 +13,7 @@ namespace GraphLib
         private readonly bool _isDirected;
 
         private readonly Dictionary<string, VertexData> _vertices;
-        private readonly Dictionary<Edge, Edge> _edges;
+        private readonly IEdgeKeeper _edges;
         private readonly EdgeKeepingFactory _edgeKeepingFactory;
 
         public Graph(bool isDirected) : this(isDirected, new DefaultVertexFactory<object>(), new EdgeKeepingFactory(false))
@@ -28,11 +28,11 @@ namespace GraphLib
 
             _edgeKeepingFactory = edgeKeepingFactory;
             _vertices = new Dictionary<string, VertexData>();
-            _edges = new Dictionary<Edge, Edge>();
+            _edges = edgeKeepingFactory.Create();
         }
 
         public IVertex[] Vertices => _vertices.Values.Select(v=>v.Vertex).ToArray();
-        public List<Edge> Edges => _edges.Values.ToList();
+        public Edge[] Edges => _edges.GetEdges().ToArray();
 
         public void AddEdge(string tailName, string headName)
         {
@@ -51,16 +51,38 @@ namespace GraphLib
         {
             Edge result = new Edge(tail, head);
 
-            _edges.Add(result, result);
-            tail.OutcomeEdges.Add(result);
-            head.IncomeEdges.Add(result);
+            _edges.Add(result);
+            tail.AddOutcomeEdge(result);
+            head.AddIncomeEdge(result);
         }
 
         public void RemoveEdge(Edge edge)
         {
             _edges.Remove(edge);
-            edge.Tail.OutcomeEdges.Remove(edge);
-            edge.Head.IncomeEdges.Remove(edge);
+            edge.Tail.RemoveOutcomeEdge(edge);
+            edge.Head.RemoveIncomeEdge(edge);
+        }
+
+        public void RemoveVertex(string name)
+        {
+            RemoveVertex(GetVertexData(name));
+        }
+
+        void RemoveVertex(VertexData vertexData)
+        {
+            foreach (var edge in vertexData.GetOutcomeEdges())
+            {
+                edge.Head.RemoveIncomeEdge(edge);
+                _edges.Remove(edge);
+            }
+
+            foreach (var edge in vertexData.GetIncomeEdges())
+            {
+                edge.Tail.RemoveOutcomeEdge(edge);
+                _edges.Remove(edge);
+            }
+
+            _vertices.Remove(vertexData.Name);
         }
 
         public IVertex GetVertex(string name)
@@ -87,7 +109,7 @@ namespace GraphLib
         public Graph Clone()
         {
             Graph result = new Graph(_isDirected, _vertexFactory, _edgeKeepingFactory);
-            foreach (var edge in _edges.Values)
+            foreach (var edge in _edges.GetEdges())
                 result.AddEdge(edge.Tail.Name, edge.Head.Name);
 
             return result;
@@ -103,7 +125,7 @@ namespace GraphLib
             foreach (var vertex in Vertices)
                 result.RegisterVertex(vertex);
 
-            foreach (var edge in _edges.Values)
+            foreach (var edge in _edges.GetEdges())
                 result.AddEdge(edge.Head.Vertex, edge.Tail.Vertex);
 
             return result;
@@ -133,7 +155,7 @@ namespace GraphLib
         
         private void MergeInt(VertexData v1, VertexData v2, VertexData newVertex)
         {
-            var edges = v1.OutcomeEdges.GetEdges();
+            var edges = v1.GetOutcomeEdges();
             foreach (Edge edge in edges)
             {
                 if (edge.Head != v2)
@@ -144,7 +166,7 @@ namespace GraphLib
                 RemoveEdge(edge);
             }
 
-            edges = v1.IncomeEdges.GetEdges();
+            edges = v1.GetIncomeEdges();
             foreach (Edge edge in edges)
             {
                 if (edge.Tail != v2)
@@ -154,27 +176,26 @@ namespace GraphLib
 
                 RemoveEdge(edge);
             }
-
         }
 
-        //public bool HasEdge(IVertex fromVertex, IVertex toVertex)
-        //{
-        //    if (_edgesFromTails.GetEdges(fromVertex).Any(e => e.Head == toVertex))
-        //        return true;
+        public bool HasEdge(VertexData fromVertex, VertexData toVertex)
+        {
+            if (fromVertex.GetOutcomeEdges().Any(e => e.Head == toVertex))
+                return true;
 
-        //    if (!_isDirected && _edgesFromTails.GetEdges(toVertex).Any(e => e.Head == fromVertex))
-        //        return true;
+            if (!_isDirected && toVertex.GetOutcomeEdges().Any(e => e.Head == fromVertex))
+                return true;
 
-        //    return false;
-        //}
+            return false;
+        }
 
         IEnumerable<VertexData> GetConnectedVertices(VertexData fromVertex)
         {
-            foreach (var edge in fromVertex.OutcomeEdges.GetEdges())
+            foreach (var edge in fromVertex.GetOutcomeEdges())
                 yield return edge.Head;
 
             if (!_isDirected)
-                foreach (var edge in fromVertex.IncomeEdges.GetEdges())
+                foreach (var edge in fromVertex.GetIncomeEdges())
                     yield return edge.Tail;
         }
 
@@ -210,7 +231,6 @@ namespace GraphLib
                             }
                         }
                     }
-
                 }
             }
         }

@@ -3,3 +3,11 @@
 ################################################################################
 
 /.vs
+/GraphLib/bin
+/GraphLib/obj
+/GraphLib/project.lock.json
+/GraphLib/GraphLib.xproj.user
+/GraphLibTests/bin
+/GraphLibTests/obj
+/GraphLibTests/project.lock.json
+/GraphLibTests/GraphLibTests.xproj.user

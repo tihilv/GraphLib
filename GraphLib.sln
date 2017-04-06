@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GraphLib", "GraphLib\GraphLib.xproj", "{15EBEB20-2403-45E6-8428-EA1AE3B7A945}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GraphLibTests", "GraphLibTests\GraphLibTests.xproj", "{376543C2-F8E1-4C32-BD93-859AE16E427D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15EBEB20-2403-45E6-8428-EA1AE3B7A945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15EBEB20-2403-45E6-8428-EA1AE3B7A945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15EBEB20-2403-45E6-8428-EA1AE3B7A945}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15EBEB20-2403-45E6-8428-EA1AE3B7A945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{376543C2-F8E1-4C32-BD93-859AE16E427D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{376543C2-F8E1-4C32-BD93-859AE16E427D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{376543C2-F8E1-4C32-BD93-859AE16E427D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{376543C2-F8E1-4C32-BD93-859AE16E427D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

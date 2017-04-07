@@ -3,7 +3,7 @@ using GraphLib.EdgeKeeping;
 
 namespace GraphLib.Vierticies
 {
-    public class OutcomeIncomeEdgeKeepingVertex : IVertex
+    internal class OutcomeIncomeEdgeKeepingVertex : IVertex
     {
         static readonly Edge[] _emptyEdges = new Edge[0];
 

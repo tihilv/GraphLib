@@ -11,22 +11,23 @@ namespace GraphLib
     public class Graph
     {
         private readonly IVertexTagFactory _vertexTagFactory;
-        private readonly bool _isDirected;
 
         private readonly Dictionary<string, IVertex> _vertices;
         private readonly IEdgeKeeper _edges;
         private readonly EdgeKeepingFactory _edgeKeepingFactory;
         private readonly VertexFactory _vertexFactory;
 
-        public Graph(bool isDirected) : this(isDirected, new DefaultVertexTagFactory(), new EdgeKeepingFactory(false), new VertexFactory(false))
+        private readonly GraphOptions _graphOptions;
+
+        public Graph(GraphOptions graphOptions) : this(graphOptions, graphOptions.CustomVertexTagFactory ?? new DefaultVertexTagFactory(), new EdgeKeepingFactory(graphOptions), new VertexFactory(graphOptions))
         {
             
         }
 
-        public Graph(bool isDirected, IVertexTagFactory vertexTagFactory, EdgeKeepingFactory edgeKeepingFactory, VertexFactory vertexFactory, int? vertexCapacity = null)
+        private Graph(GraphOptions graphOptions, IVertexTagFactory vertexTagFactory, EdgeKeepingFactory edgeKeepingFactory, VertexFactory vertexFactory, int? vertexCapacity = null)
         {
+            _graphOptions = graphOptions;
             _vertexTagFactory = vertexTagFactory;
-            _isDirected = isDirected;
 
             _edgeKeepingFactory = edgeKeepingFactory;
             _vertexFactory = vertexFactory;
@@ -36,25 +37,23 @@ namespace GraphLib
             else
                 _vertices = new Dictionary<string, IVertex>();
 
-            _edges = edgeKeepingFactory.Create();
+            _edges = edgeKeepingFactory.CreateGlobal();
         }
 
+        public GraphOptions Options => _graphOptions;
         public IVertex[] Vertices => _vertices.Values.ToArray();
         public IVertexTag[] VertexTags => _vertices.Values.Select(v=>v.VertexTag).ToArray();
         public Edge[] Edges => _edges.GetEdges().ToArray();
         public int VertexCount => _vertices.Count;
-
+        
         public void AddEdge(string tailName, string headName)
         {
-            IVertex tail = GetVertexData(tailName);
-            IVertex head = GetVertexData(headName);
-
-            AddEdge(tail, head);
+            AddEdge(GetVertex(tailName), GetVertex(headName));
         }
 
         public void AddEdge(IVertexTag tail, IVertexTag head)
         {
-            AddEdge(GetVertexData(tail.Name),GetVertexData(head.Name));
+            AddEdge(GetVertex(tail.Name), GetVertex(head.Name));
         }
 
         private void AddEdge(IVertex tail, IVertex head)
@@ -75,7 +74,7 @@ namespace GraphLib
 
         public void RemoveVertex(string name)
         {
-            RemoveVertex(GetVertexData(name));
+            RemoveVertex(GetVertex(name));
         }
 
         void RemoveVertex(IVertex vertexData)
@@ -97,10 +96,10 @@ namespace GraphLib
 
         public IVertexTag GetVertexTag(string name)
         {
-            return GetVertexData(name).VertexTag;
+            return GetVertex(name).VertexTag;
         }
 
-        private IVertex GetVertexData(string name)
+        private IVertex GetVertex(string name)
         {
             IVertex result;
             if (!_vertices.TryGetValue(name, out result))
@@ -118,27 +117,16 @@ namespace GraphLib
 
         public Graph Clone()
         {
-            Graph result = new Graph(_isDirected, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
+            Graph result = new Graph(_graphOptions, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
             foreach (var edge in _edges.GetEdges())
                 result.AddEdge(edge.Tail.Name, edge.Head.Name);
 
             return result;
         }
 
-        public Graph GetReversed()
+        internal Graph GetBlankForClone()
         {
-            if (!_isDirected)
-                throw new Exception("Unidirected graph cannot be reversed");
-
-            Graph result = new Graph(_isDirected, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
-
-            foreach (var vertexTag in VertexTags)
-                result.RegisterVertex(vertexTag);
-
-            foreach (var edge in _edges.GetEdges())
-                result.AddEdge(edge.Head.VertexTag, edge.Tail.VertexTag);
-
-            return result;
+            return new Graph(_graphOptions, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
         }
 
         public void Merge(string vName1, string vName2)
@@ -148,14 +136,12 @@ namespace GraphLib
 
         public void Merge(IVertexTag vertexTag1, IVertexTag vertexTag2)
         {
-            var v1 = GetVertexData(vertexTag1.Name);
-            var v2 = GetVertexData(vertexTag2.Name);
-            Merge(v1, v2);
+            Merge(GetVertex(vertexTag1.Name), GetVertex(vertexTag2.Name));
         }
 
         public void Merge(IVertex v1, IVertex v2)
         {
-            var newVertex = GetVertexData(v1.Name + "_" + v2.Name);
+            var newVertex = GetVertex(v1.Name + "_" + v2.Name);
             MergeInt(v1, v2, newVertex);
             MergeInt(v2, v1, newVertex);
 
@@ -193,7 +179,7 @@ namespace GraphLib
             if (fromVertex.GetOutcomeEdges().Any(e => e.Head == toVertex))
                 return true;
 
-            if (!_isDirected && toVertex.GetOutcomeEdges().Any(e => e.Head == fromVertex))
+            if (_graphOptions.Direction == GraphDirection.Undirected && toVertex.GetOutcomeEdges().Any(e => e.Head == fromVertex))
                 return true;
 
             return false;
@@ -204,7 +190,7 @@ namespace GraphLib
             foreach (var edge in fromVertex.GetOutcomeEdges())
                 yield return edge.Head;
 
-            if (!_isDirected)
+            if (_graphOptions.Direction == GraphDirection.Undirected)
                 foreach (var edge in fromVertex.GetIncomeEdges())
                     yield return edge.Tail;
         }

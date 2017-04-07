@@ -2,7 +2,7 @@
 
 namespace GraphLib.EdgeKeeping
 {
-    public class ListEdgeKeeper : IEdgeKeeper
+    internal class ListEdgeKeeper : IEdgeKeeper
     {
         private readonly List<Edge> _edges;
 

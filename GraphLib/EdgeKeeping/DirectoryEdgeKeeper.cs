@@ -2,7 +2,7 @@
 
 namespace GraphLib.EdgeKeeping
 {
-    public class DirectoryEdgeKeeper: IEdgeKeeper
+    internal class DirectoryEdgeKeeper: IEdgeKeeper
     {
         private readonly Dictionary<Edge, Edge> _edges;
 

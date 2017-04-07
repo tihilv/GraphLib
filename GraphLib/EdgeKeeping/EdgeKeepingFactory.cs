@@ -1,20 +1,28 @@
 ﻿namespace GraphLib.EdgeKeeping
 {
-    public class EdgeKeepingFactory
+    internal class EdgeKeepingFactory
     {
-        private readonly bool _optimizeForRemove;
+        private readonly GraphOptions _graphOptions;
 
-        public EdgeKeepingFactory(bool optimizeForRemove)
+        public EdgeKeepingFactory(GraphOptions graphOptions)
         {
-            _optimizeForRemove = optimizeForRemove;
+            _graphOptions = graphOptions;
         }
 
         public IEdgeKeeper Create()
         {
-            if (_optimizeForRemove)
+            if (_graphOptions.PreferedUsage == GraphPreferedUsage.OptimizedForRemove)
                 return new DirectoryEdgeKeeper();
 
             return new ListEdgeKeeper();
+        }
+
+        public IEdgeKeeper CreateGlobal()
+        {
+            if (_graphOptions.KeepEdgeList)
+                return Create();
+
+            return new FakeEdgeKeeper();
         }
     }
 }

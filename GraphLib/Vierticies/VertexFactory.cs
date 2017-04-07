@@ -2,18 +2,18 @@
 
 namespace GraphLib.Vierticies
 {
-    public class VertexFactory
+    internal class VertexFactory
     {
-        private readonly bool _keepIncomeVertices;
+        private readonly GraphOptions _graphOptions;
 
-        public VertexFactory(bool keepIncomeVertices)
+        public VertexFactory(GraphOptions graphOptions)
         {
-            _keepIncomeVertices = keepIncomeVertices;
+            _graphOptions = graphOptions;
         }
 
         public IVertex Create(IVertexTag vertexTag, EdgeKeepingFactory edgeKeepingFactory)
         {
-            if (_keepIncomeVertices)
+            if (_graphOptions.VerticesStoreMode == VerticesStoreMode.All)
                 return new OutcomeIncomeEdgeKeepingVertex(vertexTag, edgeKeepingFactory);
 
             return new OutcomeEdgeKeepingVertex(vertexTag, edgeKeepingFactory);

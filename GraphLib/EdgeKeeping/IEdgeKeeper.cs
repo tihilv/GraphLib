@@ -2,7 +2,7 @@
 
 namespace GraphLib.EdgeKeeping
 {
-    public interface IEdgeKeeper
+    internal interface IEdgeKeeper
     {
         void Add(Edge edge);
         void Remove(Edge edge);

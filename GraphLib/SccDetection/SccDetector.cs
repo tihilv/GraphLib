@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GraphLib.CommonOperations;
 using GraphLib.Vierticies;
 using GraphLib.Visiting;
 
@@ -15,7 +16,7 @@ namespace GraphLib.SccDetection
 
         public List<List<IVertex>> Process()
         {
-            var reversedGraph = _graph.GetReversed();
+            var reversedGraph = ReverseVertex.Execute(_graph);
 
             FinishingTimeVisitor finishingTimeVisitor = new FinishingTimeVisitor(reversedGraph.VertexCount);
 

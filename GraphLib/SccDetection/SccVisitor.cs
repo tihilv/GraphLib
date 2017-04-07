@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using GraphLib.Vierticies;
 using GraphLib.Visiting;
-using Scc = System.Collections.Generic.List<GraphLib.VertexData>;
+using Scc = System.Collections.Generic.List<GraphLib.Vierticies.IVertex>;
 
 namespace GraphLib.SccDetection
 {
@@ -14,18 +15,18 @@ namespace GraphLib.SccDetection
             _sccs = new List<Scc>();
         }
 
-        public void StartVisit(VertexData vertexOfWholeList)
+        public void StartVisit(IVertex vertexOfWholeList)
         {
             _currentScc = new Scc();
             _sccs.Add(_currentScc);
         }
 
-        public void VisitVertex(VertexData vertex)
+        public void VisitVertex(IVertex vertex)
         {
             _currentScc.Add(vertex);
         }
 
-        public void FinishVertex(VertexData vertex)
+        public void FinishVertex(IVertex vertex)
         {
             
         }

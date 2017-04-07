@@ -1,9 +1,11 @@
-﻿namespace GraphLib.Visiting
+﻿using GraphLib.Vierticies;
+
+namespace GraphLib.Visiting
 {
     public interface IGraphVisitor
     {
-        void StartVisit(VertexData vertexOfWholeList);
-        void VisitVertex(VertexData vertex);
-        void FinishVertex(VertexData vertex);
+        void StartVisit(IVertex vertexOfWholeList);
+        void VisitVertex(IVertex vertex);
+        void FinishVertex(IVertex vertex);
     }
 }

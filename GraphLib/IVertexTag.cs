@@ -1,6 +1,6 @@
 ﻿namespace GraphLib
 {
-    public interface IVertex
+    public interface IVertexTag
     {
         string Name { get; }
     }

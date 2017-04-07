@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GraphLib.Vierticies;
 
 namespace GraphLib.Visiting
 {
@@ -6,9 +7,9 @@ namespace GraphLib.Visiting
     {
         readonly Queue<DequeueResult> _vertices = new Queue<DequeueResult>();
 
-        public void EnqueueVertices(IEnumerable<VertexData> vertices, VertexData parentVertex)
+        public void EnqueueVertices(IEnumerable<IVertex> vertices, IVertex parentVertex)
         {
-            foreach (VertexData vertex in vertices)
+            foreach (IVertex vertex in vertices)
                 _vertices.Enqueue(new DequeueResult(vertex, VertexDequeueType.Processing));
 
             if (parentVertex != null)

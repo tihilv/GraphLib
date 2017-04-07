@@ -1,11 +1,9 @@
-namespace GraphLib
+namespace GraphLib.VertexCreation
 {
-    class Vertex<T>: IVertex
+    class VertexTag: IVertexTag
     {
         readonly string _name;
-        public T Tag;
-
-        public Vertex(string name)
+        public VertexTag(string name)
         {
             _name = name;
         }

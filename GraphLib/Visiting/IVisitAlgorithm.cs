@@ -1,24 +1,13 @@
 ﻿using System.Collections.Generic;
+using GraphLib.Vierticies;
 
 namespace GraphLib.Visiting
 {
     public interface IVisitAlgorithm
     {
-        void EnqueueVertices(IEnumerable<VertexData> vertices, VertexData parentVertex);
+        void EnqueueVertices(IEnumerable<IVertex> vertices, IVertex parentVertex);
 
         DequeueResult? DequeueVertex();
-    }
-
-    public struct DequeueResult
-    {
-        public readonly VertexData Vertex;
-        public readonly VertexDequeueType Type;
-
-        public DequeueResult(VertexData vertex, VertexDequeueType type)
-        {
-            Vertex = vertex;
-            Type = type;
-        }
     }
 
     public enum VertexDequeueType

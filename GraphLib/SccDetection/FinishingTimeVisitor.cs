@@ -1,33 +1,34 @@
-﻿using GraphLib.Visiting;
+﻿using GraphLib.Vierticies;
+using GraphLib.Visiting;
 
 namespace GraphLib.SccDetection
 {
     public class FinishingTimeVisitor: IGraphVisitor
     {
-        private readonly IVertex[] _vertices;
+        private readonly IVertexTag[] _vertexTags;
         private int _position = 0;
 
         public FinishingTimeVisitor(long verticesCount)
         {
-            _vertices = new IVertex[verticesCount];
+            _vertexTags = new IVertexTag[verticesCount];
         }
 
-        public void StartVisit(VertexData vertexOfWholeList)
+        public void StartVisit(IVertex vertexOfWholeList)
         {
             
         }
 
-        public void VisitVertex(VertexData vertex)
+        public void VisitVertex(IVertex vertex)
         {
             
         }
 
-        public void FinishVertex(VertexData vertex)
+        public void FinishVertex(IVertex vertex)
         {
             _position++;
-            _vertices[_vertices.Length - _position] = vertex.Vertex;
+            _vertexTags[_vertexTags.Length - _position] = vertex.VertexTag;
         }
 
-        public IVertex[] SortedVertices => _vertices;
+        public IVertexTag[] SortedVertexTags => _vertexTags;
     }
 }

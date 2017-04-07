@@ -3,51 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using GraphLib.EdgeKeeping;
 using GraphLib.VertexCreation;
+using GraphLib.Vierticies;
 using GraphLib.Visiting;
 
 namespace GraphLib
 {
     public class Graph
     {
-        private readonly IVertexFactory _vertexFactory;
+        private readonly IVertexTagFactory _vertexTagFactory;
         private readonly bool _isDirected;
 
-        private readonly Dictionary<string, VertexData> _vertices;
+        private readonly Dictionary<string, IVertex> _vertices;
         private readonly IEdgeKeeper _edges;
         private readonly EdgeKeepingFactory _edgeKeepingFactory;
+        private readonly VertexFactory _vertexFactory;
 
-        public Graph(bool isDirected) : this(isDirected, new DefaultVertexFactory<object>(), new EdgeKeepingFactory(false))
+        public Graph(bool isDirected) : this(isDirected, new DefaultVertexTagFactory(), new EdgeKeepingFactory(false), new VertexFactory(false))
         {
             
         }
 
-        public Graph(bool isDirected, IVertexFactory vertexFactory, EdgeKeepingFactory edgeKeepingFactory)
+        public Graph(bool isDirected, IVertexTagFactory vertexTagFactory, EdgeKeepingFactory edgeKeepingFactory, VertexFactory vertexFactory, int? vertexCapacity = null)
         {
-            _vertexFactory = vertexFactory;
+            _vertexTagFactory = vertexTagFactory;
             _isDirected = isDirected;
 
             _edgeKeepingFactory = edgeKeepingFactory;
-            _vertices = new Dictionary<string, VertexData>();
+            _vertexFactory = vertexFactory;
+
+            if (vertexCapacity != null)
+                _vertices = new Dictionary<string, IVertex>(vertexCapacity.Value);
+            else
+                _vertices = new Dictionary<string, IVertex>();
+
             _edges = edgeKeepingFactory.Create();
         }
 
-        public IVertex[] Vertices => _vertices.Values.Select(v=>v.Vertex).ToArray();
+        public IVertex[] Vertices => _vertices.Values.ToArray();
+        public IVertexTag[] VertexTags => _vertices.Values.Select(v=>v.VertexTag).ToArray();
         public Edge[] Edges => _edges.GetEdges().ToArray();
+        public int VertexCount => _vertices.Count;
 
         public void AddEdge(string tailName, string headName)
         {
-            VertexData tail = GetVertexData(tailName);
-            VertexData head = GetVertexData(headName);
+            IVertex tail = GetVertexData(tailName);
+            IVertex head = GetVertexData(headName);
 
             AddEdge(tail, head);
         }
 
-        public void AddEdge(IVertex tail, IVertex head)
+        public void AddEdge(IVertexTag tail, IVertexTag head)
         {
             AddEdge(GetVertexData(tail.Name),GetVertexData(head.Name));
         }
 
-        private void AddEdge(VertexData tail, VertexData head)
+        private void AddEdge(IVertex tail, IVertex head)
         {
             Edge result = new Edge(tail, head);
 
@@ -68,7 +78,7 @@ namespace GraphLib
             RemoveVertex(GetVertexData(name));
         }
 
-        void RemoveVertex(VertexData vertexData)
+        void RemoveVertex(IVertex vertexData)
         {
             foreach (var edge in vertexData.GetOutcomeEdges())
             {
@@ -85,30 +95,30 @@ namespace GraphLib
             _vertices.Remove(vertexData.Name);
         }
 
-        public IVertex GetVertex(string name)
+        public IVertexTag GetVertexTag(string name)
         {
-            return GetVertexData(name).Vertex;
+            return GetVertexData(name).VertexTag;
         }
 
-        private VertexData GetVertexData(string name)
+        private IVertex GetVertexData(string name)
         {
-            VertexData result;
+            IVertex result;
             if (!_vertices.TryGetValue(name, out result))
-                result = RegisterVertex(_vertexFactory.CreateVertex(name));
+                result = RegisterVertex(_vertexTagFactory.CreateVertex(name));
 
             return result;
         }
 
-        private VertexData RegisterVertex(IVertex vertex)
+        private IVertex RegisterVertex(IVertexTag vertexTag)
         {
-            var result = new VertexData(vertex, _edgeKeepingFactory);
-            _vertices.Add(vertex.Name, result);
+            var result = _vertexFactory.Create(vertexTag, _edgeKeepingFactory);
+            _vertices.Add(vertexTag.Name, result);
             return result;
         }
 
         public Graph Clone()
         {
-            Graph result = new Graph(_isDirected, _vertexFactory, _edgeKeepingFactory);
+            Graph result = new Graph(_isDirected, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
             foreach (var edge in _edges.GetEdges())
                 result.AddEdge(edge.Tail.Name, edge.Head.Name);
 
@@ -120,30 +130,30 @@ namespace GraphLib
             if (!_isDirected)
                 throw new Exception("Unidirected graph cannot be reversed");
 
-            Graph result = new Graph(_isDirected, _vertexFactory, _edgeKeepingFactory);
+            Graph result = new Graph(_isDirected, _vertexTagFactory, _edgeKeepingFactory, _vertexFactory, VertexCount);
 
-            foreach (var vertex in Vertices)
-                result.RegisterVertex(vertex);
+            foreach (var vertexTag in VertexTags)
+                result.RegisterVertex(vertexTag);
 
             foreach (var edge in _edges.GetEdges())
-                result.AddEdge(edge.Head.Vertex, edge.Tail.Vertex);
+                result.AddEdge(edge.Head.VertexTag, edge.Tail.VertexTag);
 
             return result;
         }
 
         public void Merge(string vName1, string vName2)
         {
-            Merge(GetVertex(vName1), GetVertex(vName2));
+            Merge(GetVertexTag(vName1), GetVertexTag(vName2));
         }
 
-        public void Merge(IVertex vertex1, IVertex vertex2)
+        public void Merge(IVertexTag vertexTag1, IVertexTag vertexTag2)
         {
-            var v1 = GetVertexData(vertex1.Name);
-            var v2 = GetVertexData(vertex2.Name);
+            var v1 = GetVertexData(vertexTag1.Name);
+            var v2 = GetVertexData(vertexTag2.Name);
             Merge(v1, v2);
         }
 
-        public void Merge(VertexData v1, VertexData v2)
+        public void Merge(IVertex v1, IVertex v2)
         {
             var newVertex = GetVertexData(v1.Name + "_" + v2.Name);
             MergeInt(v1, v2, newVertex);
@@ -153,7 +163,7 @@ namespace GraphLib
             _vertices.Remove(v2.Name);
         }
         
-        private void MergeInt(VertexData v1, VertexData v2, VertexData newVertex)
+        private void MergeInt(IVertex v1, IVertex v2, IVertex newVertex)
         {
             var edges = v1.GetOutcomeEdges();
             foreach (Edge edge in edges)
@@ -178,7 +188,7 @@ namespace GraphLib
             }
         }
 
-        public bool HasEdge(VertexData fromVertex, VertexData toVertex)
+        public bool HasEdge(IVertex fromVertex, IVertex toVertex)
         {
             if (fromVertex.GetOutcomeEdges().Any(e => e.Head == toVertex))
                 return true;
@@ -189,7 +199,7 @@ namespace GraphLib
             return false;
         }
 
-        IEnumerable<VertexData> GetConnectedVertices(VertexData fromVertex)
+        IEnumerable<IVertex> GetConnectedVertices(IVertex fromVertex)
         {
             foreach (var edge in fromVertex.GetOutcomeEdges())
                 yield return edge.Head;
@@ -199,15 +209,15 @@ namespace GraphLib
                     yield return edge.Tail;
         }
 
-        public void Visit(IVisitAlgorithm visitAlgorithm, IGraphVisitor visitor, IEnumerable<IVertex> vertices = null)
+        public void Visit(IVisitAlgorithm visitAlgorithm, IGraphVisitor visitor, IEnumerable<IVertexTag> vertexTags = null)
         {
-            IEnumerable<VertexData> verticesToObserve = _vertices.Values;
-            if (vertices != null)
-                verticesToObserve = vertices.Select(v => _vertices[v.Name]);
+            IEnumerable<IVertex> verticesToObserve = _vertices.Values;
+            if (vertexTags != null)
+                verticesToObserve = vertexTags.Select(v => _vertices[v.Name]);
 
-            HashSet<VertexData> visitedVertices = new HashSet<VertexData>();
+            HashSet<IVertex> visitedVertices = new HashSet<IVertex>();
 
-            foreach (VertexData vertexOfWholeList in verticesToObserve)
+            foreach (IVertex vertexOfWholeList in verticesToObserve)
             {
                 if (!visitedVertices.Contains(vertexOfWholeList))
                 {
@@ -217,7 +227,7 @@ namespace GraphLib
                     DequeueResult? currentVertexResult;
                     while ((currentVertexResult = visitAlgorithm.DequeueVertex()) != null)
                     {
-                        VertexData currentVertex = currentVertexResult.Value.Vertex;
+                        IVertex currentVertex = currentVertexResult.Value.Vertex;
                         if (currentVertexResult.Value.Type == VertexDequeueType.Finishing)
                             visitor.FinishVertex(currentVertex);
                         else

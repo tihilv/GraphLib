@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GraphLib.Vierticies;
 using GraphLib.Visiting;
 
 namespace GraphLib.SccDetection
@@ -12,16 +13,16 @@ namespace GraphLib.SccDetection
             _graph = graph;
         }
 
-        public List<List<VertexData>> Process()
+        public List<List<IVertex>> Process()
         {
             var reversedGraph = _graph.GetReversed();
 
-            FinishingTimeVisitor finishingTimeVisitor = new FinishingTimeVisitor(reversedGraph.Vertices.Length);
+            FinishingTimeVisitor finishingTimeVisitor = new FinishingTimeVisitor(reversedGraph.VertexCount);
 
             reversedGraph.Visit(new DfsVisitAlgorighm(), finishingTimeVisitor);
 
             SccVisitor sccVisitor = new SccVisitor();
-            _graph.Visit(new DfsVisitAlgorighm(), sccVisitor, finishingTimeVisitor.SortedVertices);
+            _graph.Visit(new DfsVisitAlgorighm(), sccVisitor, finishingTimeVisitor.SortedVertexTags);
 
             return sccVisitor.Result;
         }

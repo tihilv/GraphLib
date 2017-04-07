@@ -1,8 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using GraphLib;
 using GraphLib.SccDetection;
 using Xunit;
 using System.Linq;
+using System.Reflection;
 
 namespace GraphLibTests
 {
@@ -37,10 +40,14 @@ namespace GraphLibTests
         [Fact]
         public void TestFromFile()
         {
-            Graph graph = new Graph(true);
-
-            var path = Path.Combine("..", "..", "data", "sccTestData.txt");
+            var location = Path.GetDirectoryName(typeof(SccTests).GetTypeInfo().Assembly.Location);
+            var path = Path.Combine(location, "..", "..", "..", "data", "sccTestData.txt");
             var lines = File.ReadAllLines(path);
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Graph graph = new Graph(true);
+            
             foreach (string line in lines)
             {
                 string[] parsed = line.Split(' ');
@@ -50,6 +57,9 @@ namespace GraphLibTests
             SccDetector detector = new SccDetector(graph);
             var result = detector.Process();
             var combined = result.Select(r => r.Count).OrderBy(r=>-r).ToArray();
+            stopwatch.Stop();
+            Console.WriteLine($"Running time: {stopwatch.Elapsed}");
+
 
             Assert.Equal(434821, combined[0]);
             Assert.Equal(968, combined[1]);

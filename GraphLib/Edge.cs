@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using GraphLib.Vierticies;
 
 namespace GraphLib
 {
     public class Edge : IEquatable<Edge>
     {
-        public readonly VertexData Tail;
-        public readonly VertexData Head;
+        public readonly IVertex Tail;
+        public readonly IVertex Head;
 
-        internal Edge(VertexData tail, VertexData head)
+        internal Edge(IVertex tail, IVertex head)
         {
             Tail = tail;
             Head = head;

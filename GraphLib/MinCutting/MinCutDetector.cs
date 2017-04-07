@@ -17,7 +17,7 @@ namespace GraphLib.MinCutting
         {
             int best = int.MaxValue;
 
-            int count = (int)(_graph.Vertices.Length * _graph.Vertices.Length * Math.Log(_graph.Vertices.Length));
+            int count = (int)(_graph.VertexTags.Length * _graph.VertexTags.Length * Math.Log(_graph.VertexTags.Length));
             for (int i = 0; i < count; i++)
             {
                 var value = TryCut(_graph);
@@ -30,7 +30,7 @@ namespace GraphLib.MinCutting
         {
             var g = graph.Clone();
 
-            while (g.Vertices.Length > 2)
+            while (g.VertexTags.Length > 2)
             {
                 var e = g.Edges[_random.Next(0, g.Edges.Length)];
                 g.Merge(e.Tail, e.Head);

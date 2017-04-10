@@ -34,6 +34,8 @@ namespace GraphLib.TmpPrimitives
             return result;
         }
 
+        public int Count => _elements.Count;
+
         protected void Delete(int index)
         {
             _elements[index] = _elements[_elements.Count - 1];

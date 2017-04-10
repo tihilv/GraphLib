@@ -1,5 +1,5 @@
 ﻿using System;
-using GraphLib.Vierticies;
+using GraphLib.Vertices;
 using GraphLib.Visiting;
 
 namespace GraphLib.CommonOperations

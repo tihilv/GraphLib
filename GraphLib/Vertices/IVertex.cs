@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GraphLib.Vierticies
+namespace GraphLib.Vertices
 {
     public interface IVertex
     {

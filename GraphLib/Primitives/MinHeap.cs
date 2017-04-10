@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GraphLib.TmpPrimitives
+namespace GraphLib.Primitives
 {
     public class MinHeap<TKey, TElement> where TKey: IComparable
     {
@@ -17,9 +17,14 @@ namespace GraphLib.TmpPrimitives
 
         public void Insert(TElement element)
         {
+            InsertReturnPosition(element);
+        }
+
+        protected virtual int InsertReturnPosition(TElement element)
+        {
             var newItem = new Item(_keyProvider(element), element);
             _elements.Add(newItem);
-            BubbleUp(_elements.Count - 1);
+            return BubbleUp(_elements.Count - 1);
         }
 
         public TElement Peek()
@@ -43,7 +48,7 @@ namespace GraphLib.TmpPrimitives
             BubbleDown(index);
         }
 
-        private void BubbleUp(int fromIndex)
+        private int BubbleUp(int fromIndex)
         {
             int currentIndex = fromIndex;
             bool swapOccured;
@@ -58,6 +63,8 @@ namespace GraphLib.TmpPrimitives
                     swapOccured = true;
                 }
             } while (swapOccured);
+
+            return currentIndex;
         }
 
         protected virtual void Swap(int fromIndex, int toIndex)
@@ -117,11 +124,20 @@ namespace GraphLib.TmpPrimitives
         {
             _positions[_elements[fromIndex].Value] = toIndex;
             _positions[_elements[toIndex].Value] = fromIndex;
+
+            base.Swap(fromIndex, toIndex);
         }
 
         public void Remove(TElement element)
         {
             Delete(_positions[element]);
+        }
+
+        protected override int InsertReturnPosition(TElement element)
+        {
+            var result = base.InsertReturnPosition(element);
+            _positions[element] = result;
+            return result;
         }
     }
 }

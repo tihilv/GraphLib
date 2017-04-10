@@ -1,9 +1,9 @@
-﻿using GraphLib.Vierticies;
+﻿using GraphLib.Vertices;
 using GraphLib.Visiting;
 
 namespace GraphLib.SccDetection
 {
-    public class FinishingTimeVisitor: IGraphVisitor
+    internal class FinishingTimeVisitor: IGraphVisitor
     {
         private readonly IVertexTag[] _vertexTags;
         private int _position = 0;

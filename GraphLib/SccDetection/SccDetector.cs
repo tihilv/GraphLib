@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GraphLib.CommonOperations;
-using GraphLib.Vierticies;
+using GraphLib.VertexCreation;
+using GraphLib.Vertices;
 using GraphLib.Visiting;
 
 namespace GraphLib.SccDetection
@@ -27,5 +28,11 @@ namespace GraphLib.SccDetection
 
             return sccVisitor.Result;
         }
+
+        public static GraphOptions OptimizedOptions(IVertexTagFactory vertexTagFactory = null)
+        {
+            return new GraphOptions(GraphDirection.Directed, VerticesStoreMode.Outcome, GraphPreferedUsage.OptimizedForInsert, false, vertexTagFactory);
+        }
+
     }
 }

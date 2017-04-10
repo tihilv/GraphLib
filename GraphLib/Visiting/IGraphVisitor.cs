@@ -1,4 +1,4 @@
-﻿using GraphLib.Vierticies;
+﻿using GraphLib.Vertices;
 
 namespace GraphLib.Visiting
 {

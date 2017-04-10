@@ -33,10 +33,5 @@ namespace GraphLib
         public IVertexTagFactory CustomVertexTagFactory => _customVertexTagFactory;
 
         public bool KeepEdgeList => _keepEdgeList;
-
-        public static GraphOptions SccOptimizedOptions(IVertexTagFactory vertexTagFactory = null)
-        {
-            return new GraphOptions(GraphDirection.Directed, VerticesStoreMode.Outcome, GraphPreferedUsage.OptimizedForInsert, false, vertexTagFactory);
-        }
     }
 }

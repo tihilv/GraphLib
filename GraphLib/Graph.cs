@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GraphLib.EdgeKeeping;
 using GraphLib.VertexCreation;
-using GraphLib.Vierticies;
+using GraphLib.Vertices;
 using GraphLib.Visiting;
 
 namespace GraphLib
@@ -46,19 +45,19 @@ namespace GraphLib
         public Edge[] Edges => _edges.GetEdges().ToArray();
         public int VertexCount => _vertices.Count;
         
-        public void AddEdge(string tailName, string headName)
+        public void AddEdge(string tailName, string headName, long length = 1)
         {
-            AddEdge(GetVertex(tailName), GetVertex(headName));
+            AddEdge(GetVertex(tailName), GetVertex(headName), length);
         }
 
-        public void AddEdge(IVertexTag tail, IVertexTag head)
+        public void AddEdge(IVertexTag tail, IVertexTag head, long length = 1)
         {
-            AddEdge(GetVertex(tail.Name), GetVertex(head.Name));
+            AddEdge(GetVertex(tail.Name), GetVertex(head.Name), length);
         }
 
-        private void AddEdge(IVertex tail, IVertex head)
+        public void AddEdge(IVertex tail, IVertex head, long length)
         {
-            Edge result = new Edge(tail, head);
+            Edge result = new Edge(tail, head, length);
 
             _edges.Add(result);
             tail.AddOutcomeEdge(result);
@@ -99,7 +98,7 @@ namespace GraphLib
             return GetVertex(name).VertexTag;
         }
 
-        private IVertex GetVertex(string name)
+        public IVertex GetVertex(string name)
         {
             IVertex result;
             if (!_vertices.TryGetValue(name, out result))
@@ -156,7 +155,7 @@ namespace GraphLib
             {
                 if (edge.Head != v2)
                 {
-                    AddEdge(newVertex, edge.Head);
+                    AddEdge(newVertex, edge.Head, edge.Length);
                 }
 
                 RemoveEdge(edge);
@@ -167,7 +166,7 @@ namespace GraphLib
             {
                 if (edge.Tail != v2)
                 {
-                    AddEdge(edge.Tail, newVertex);
+                    AddEdge(edge.Tail, newVertex, edge.Length);
                 }
 
                 RemoveEdge(edge);

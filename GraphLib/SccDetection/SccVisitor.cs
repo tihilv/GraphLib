@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using GraphLib.Vierticies;
+using GraphLib.Vertices;
 using GraphLib.Visiting;
-using Scc = System.Collections.Generic.List<GraphLib.Vierticies.IVertex>;
+using Scc = System.Collections.Generic.List<GraphLib.Vertices.IVertex>;
 
 namespace GraphLib.SccDetection
 {
-    public class SccVisitor: IGraphVisitor
+    internal class SccVisitor: IGraphVisitor
     {
         private readonly List<Scc> _sccs;
         private Scc _currentScc;

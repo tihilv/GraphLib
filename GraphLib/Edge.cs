@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GraphLib.Vierticies;
+using GraphLib.Vertices;
 
 namespace GraphLib
 {
@@ -8,11 +8,13 @@ namespace GraphLib
     {
         public readonly IVertex Tail;
         public readonly IVertex Head;
+        public readonly long Length;
 
-        internal Edge(IVertex tail, IVertex head)
+        internal Edge(IVertex tail, IVertex head, long length)
         {
             Tail = tail;
             Head = head;
+            Length = length;
         }
 
         public override string ToString()

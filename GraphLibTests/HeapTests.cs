@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using GraphLib;
-using GraphLib.TmpPrimitives;
+using GraphLib.Primitives;
 using Xunit;
 using Xunit.Abstractions;
 

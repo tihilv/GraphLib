@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GraphLib.EdgeKeeping;
 
-namespace GraphLib.Vierticies
+namespace GraphLib.Vertices
 {
     internal class OutcomeEdgeKeepingVertex : IVertex
     {

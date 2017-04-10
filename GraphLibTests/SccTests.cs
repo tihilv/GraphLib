@@ -15,7 +15,7 @@ namespace GraphLibTests
         [Fact]
         public void SimpleTest() 
         {
-            Graph graph = new Graph(GraphOptions.SccOptimizedOptions());
+            Graph graph = new Graph(SccDetector.OptimizedOptions());
 
             graph.AddEdge("1", "7");
             graph.AddEdge("7", "4");
@@ -44,7 +44,7 @@ namespace GraphLibTests
             var location = Path.GetDirectoryName(typeof(SccTests).GetTypeInfo().Assembly.Location);
             var path = Path.Combine(location, "..", "..", "..", "data", "sccTestData.txt");
             
-            Graph graph = new Graph(GraphOptions.SccOptimizedOptions());
+            Graph graph = new Graph(SccDetector.OptimizedOptions());
 
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (var textReader = new StreamReader(stream, Encoding.ASCII))

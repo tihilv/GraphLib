@@ -20,32 +20,25 @@ namespace GraphLib.PathFinding
             _vertexToPathDictionary = new Dictionary<IVertex, PathDistanceInfo>();
         }
 
-        PathDistanceInfo GetPathDistanceInfo(IVertex vertex, long score)
+        PathDistanceInfo GetPathDistanceInfo(IVertex vertex, long score, IVertex parent)
         {
-            var result = new PathDistanceInfo(vertex, score);
+            var result = new PathDistanceInfo(vertex, score, parent);
             _vertexToPathDictionary[vertex] = result;
             return result;
         }
 
         public void Process(IVertex srcVertex)
         {
-            if (_graph.Options.VerticesStoreMode != VerticesStoreMode.All)
-                throw new Exception($"Unable to proceed graph with option VerticesStoreMode={_graph.Options.VerticesStoreMode}");
-
             MihHeapRemovable<long, PathDistanceInfo> unobserved= new MihHeapRemovable<long, PathDistanceInfo>(i=>i.Distance);
 
-            GetPathDistanceInfo(srcVertex, 0);
+            GetPathDistanceInfo(srcVertex, 0, null);
 
-            foreach (var vertex in _graph.Vertices)
+            foreach(var vertex in _graph.Vertices)
                 if (vertex != srcVertex)
-                {
-                    long score = long.MaxValue;
-                    var toSourceEdges = vertex.GetIncomeEdges().Where(e => e.Tail == srcVertex);
-                    foreach (Edge edge in toSourceEdges)
-                        score = Math.Min(score, edge.Length);
+                    unobserved.Insert(GetPathDistanceInfo(vertex, Int64.MaxValue, null));
 
-                    unobserved.Insert(GetPathDistanceInfo(vertex, score));
-                }
+            foreach (var edge in srcVertex.GetOutcomeEdges())
+                    unobserved.Insert(GetPathDistanceInfo(edge.Head, edge.Length, srcVertex));
 
             while (unobserved.Count > 0 && unobserved.Peek().Distance < long.MaxValue)
             {
@@ -59,18 +52,22 @@ namespace GraphLib.PathFinding
                     if (otherPathInfo.Distance > newScore)
                     {
                         unobserved.Remove(otherPathInfo);
-                        otherPathInfo = GetPathDistanceInfo(otherPathInfo.Vertex, newScore);
+                        otherPathInfo = GetPathDistanceInfo(otherPathInfo.Vertex, newScore, current.Vertex);
                         unobserved.Insert(otherPathInfo);
                     }
                 }
             }
         }
 
-        public void ProcessNaive(IVertex srcVertex)
+        /// <summary>
+        /// Only for test reasons 
+        /// </summary>
+        /// <param name="srcVertex"></param>
+        internal void ProcessNaive(IVertex srcVertex)
         {
             List<IVertex> unobserved = new List<IVertex>();
 
-            GetPathDistanceInfo(srcVertex, 0);
+            GetPathDistanceInfo(srcVertex, 0, null);
 
             foreach (IVertex vertex in _graph.Vertices)
             {
@@ -98,7 +95,7 @@ namespace GraphLib.PathFinding
                     break;
 
                 unobserved.Remove(nextVertex);
-                GetPathDistanceInfo(nextVertex, bestScore);
+                GetPathDistanceInfo(nextVertex, bestScore, null);
             }
         }
 
@@ -106,7 +103,7 @@ namespace GraphLib.PathFinding
 
         public static GraphOptions OptimizedOptions(IVertexTagFactory vertexTagFactory = null)
         {
-            return new GraphOptions(GraphDirection.Directed, VerticesStoreMode.All, GraphPreferedUsage.OptimizedForInsert, false, vertexTagFactory);
+            return new GraphOptions(GraphDirection.Directed, VerticesStoreMode.Outcome, GraphPreferedUsage.OptimizedForInsert, false, vertexTagFactory);
         }
     }
 
@@ -114,23 +111,14 @@ namespace GraphLib.PathFinding
     {
         public readonly IVertex Vertex;
         public readonly long Distance;
+        public readonly IVertex Parent;
 
-        public PathDistanceInfo(IVertex vertex, long score) : this()
+        public PathDistanceInfo(IVertex vertex, long score, IVertex parent) : this()
         {
             Vertex = vertex;
             Distance = score;
+            Parent = parent;
         }
-
-        private sealed class ScoreEqualityComparer : IComparer<PathDistanceInfo>
-        {
-            public int Compare(PathDistanceInfo x, PathDistanceInfo y)
-            {
-                return Math.Sign(x.Distance - y.Distance);
-            }
-        }
-
-        private static readonly IComparer<PathDistanceInfo> ScoreComparerInstance = new ScoreEqualityComparer();
-
-        public static IComparer<PathDistanceInfo> ScoreComparer => ScoreComparerInstance;
     }
 }
+

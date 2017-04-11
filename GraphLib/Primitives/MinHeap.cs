@@ -43,7 +43,7 @@ namespace GraphLib.Primitives
 
         protected void Delete(int index)
         {
-            _elements[index] = _elements[_elements.Count - 1];
+            Swap(index, _elements.Count - 1);
             _elements.RemoveAt(_elements.Count - 1);
             BubbleDown(index);
         }
@@ -130,7 +130,13 @@ namespace GraphLib.Primitives
 
         public void Remove(TElement element)
         {
-            Delete(_positions[element]);
+            int position;
+            
+            if (_positions.TryGetValue(element, out position))
+            {
+                Delete(position);
+                _positions.Remove(element);
+            }
         }
 
         protected override int InsertReturnPosition(TElement element)

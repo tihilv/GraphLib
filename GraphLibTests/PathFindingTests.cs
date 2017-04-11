@@ -29,7 +29,7 @@ namespace GraphLibTests
             graph.AddEdge(w, t, 3);
 
             DijkstraPathFinder detector = new DijkstraPathFinder(graph);
-            detector.ProcessNaive(s);
+            detector.Process(s);
             var result = detector.VertexToPathDictionary;
 
             Assert.Equal(result[s].Distance, 0);
@@ -65,7 +65,7 @@ namespace GraphLibTests
             }
 
             DijkstraPathFinder detector = new DijkstraPathFinder(graph);
-            detector.ProcessNaive(graph.GetVertex("1"));
+            detector.Process(graph.GetVertex("1"));
             var result = detector.VertexToPathDictionary;
 
             var output = FormatOutput("7,37,59,82,99,115,133,165,188,197", graph, result);

@@ -32,7 +32,7 @@ namespace GraphLib.Primitives
             return _elements[0].Value;
         }
 
-        public TElement Extract()
+        public virtual TElement Extract()
         {
             var result = Peek();
             Delete(0);
@@ -45,10 +45,15 @@ namespace GraphLib.Primitives
         {
             Swap(index, _elements.Count - 1);
             _elements.RemoveAt(_elements.Count - 1);
-            BubbleDown(index);
+            if (_elements.Count > index)
+            {
+                index = BubbleDown(index);
+                if (index != 0)
+                    BubbleUp(index);
+            }
         }
 
-        private int BubbleUp(int fromIndex)
+        protected int BubbleUp(int fromIndex)
         {
             int currentIndex = fromIndex;
             bool swapOccured;
@@ -74,7 +79,7 @@ namespace GraphLib.Primitives
             _elements[toIndex] = t;
         }
 
-        private void BubbleDown(int fromIndex)
+        private int BubbleDown(int fromIndex)
         {
             int currentIndex = fromIndex;
             bool swapOccured;
@@ -96,6 +101,8 @@ namespace GraphLib.Primitives
                     swapOccured = true;
                 }
             } while (swapOccured);
+
+            return currentIndex;
         }
 
         protected struct Item
@@ -111,7 +118,7 @@ namespace GraphLib.Primitives
         }
     }
 
-    internal class MihHeapRemovable<TKey, TElement>: MinHeap<TKey, TElement> where TKey: IComparable
+    public class MihHeapRemovable<TKey, TElement>: MinHeap<TKey, TElement> where TKey: IComparable
     {
         private readonly Dictionary<TElement, int> _positions;
 
@@ -143,6 +150,13 @@ namespace GraphLib.Primitives
         {
             var result = base.InsertReturnPosition(element);
             _positions[element] = result;
+            return result;
+        }
+
+        public override TElement Extract()
+        {
+            var result = base.Extract();
+            _positions.Remove(result);
             return result;
         }
     }

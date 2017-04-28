@@ -17,6 +17,17 @@ namespace GraphLib
             Length = length;
         }
 
+        public IVertex Other(IVertex vertex)
+        {
+            if (Tail == vertex)
+                return Head;
+
+            if (Head == vertex)
+                return Tail;
+
+            throw new Exception("Edge doesn't contain given vertex");
+        }
+
         public override string ToString()
         {
             return Tail.Name + " - " + Head.Name;

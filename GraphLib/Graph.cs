@@ -62,6 +62,12 @@ namespace GraphLib
             _edges.Add(result);
             tail.AddOutcomeEdge(result);
             head.AddIncomeEdge(result);
+
+            if (_graphOptions.Direction == GraphDirection.Undirected)
+            {
+                head.AddOutcomeEdge(result);
+                tail.AddIncomeEdge(result);
+            }
         }
 
         public void RemoveEdge(Edge edge)
@@ -69,6 +75,12 @@ namespace GraphLib
             _edges.Remove(edge);
             edge.Tail.RemoveOutcomeEdge(edge);
             edge.Head.RemoveIncomeEdge(edge);
+
+            if (_graphOptions.Direction == GraphDirection.Undirected)
+            {
+                edge.Head.RemoveOutcomeEdge(edge);
+                edge.Tail.RemoveIncomeEdge(edge);
+            }
         }
 
         public void RemoveVertex(string name)
@@ -222,7 +234,7 @@ namespace GraphLib
                                 visitedVertices.Add(currentVertex);
                                 visitor.VisitVertex(currentVertex);
                                 
-                                visitAlgorithm.EnqueueVertices(GetConnectedVertices(currentVertex), currentVertex);
+                                visitAlgorithm.EnqueueVertices(currentVertex.GetOutcomeEdges().Select(e=>e.Other(currentVertex)), currentVertex);
                             }
                         }
                     }

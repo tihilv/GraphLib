@@ -42,8 +42,7 @@ namespace GraphLib.PathFinding
 
             while (unobserved.Count > 0 && unobserved.Peek().Distance < long.MaxValue)
             {
-                var current = unobserved.Peek();
-                unobserved.Remove(current);
+                var current = unobserved.Extract();
 
                 foreach (var edge in current.Vertex.GetOutcomeEdges())
                 {

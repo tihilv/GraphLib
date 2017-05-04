@@ -29,7 +29,7 @@ namespace GraphLib.PathFinding
 
         public void Process(IVertex srcVertex)
         {
-            MihHeapRemovable<long, PathDistanceInfo> unobserved= new MihHeapRemovable<long, PathDistanceInfo>(i=>i.Distance);
+            MihHeapRemovable<long, PathDistanceInfo> unobserved = new MihHeapRemovable<long, PathDistanceInfo>(i=>i.Distance);
 
             GetPathDistanceInfo(srcVertex, 0, null);
 

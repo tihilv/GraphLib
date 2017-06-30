@@ -11,6 +11,26 @@ namespace GraphLibTests
     public class HuffmanTests
     {
         [Fact]
+        public void SimpleTest1()
+        {
+            List<Literal> literals = new List<Literal>();
+            literals.Add(new Literal("A", 28));
+            literals.Add(new Literal("B", 27));
+            literals.Add(new Literal("C", 20));
+            literals.Add(new Literal("D", 15));
+            literals.Add(new Literal("E", 10));
+
+            HuffmanTreeGenerator treeGenerator = new HuffmanTreeGenerator();
+            treeGenerator.Process(literals);
+            treeGenerator.FillCodes();
+
+            var r = treeGenerator.Codes["A"].Length * 28 + treeGenerator.Codes["B"].Length * 27 +
+                    treeGenerator.Codes["C"].Length * 20 + treeGenerator.Codes["D"].Length * 15 +
+                    treeGenerator.Codes["E"].Length * 10;
+        }
+
+
+        [Fact]
         public void SimpleTest()
         {
             List<Literal> literals = new List<Literal>();

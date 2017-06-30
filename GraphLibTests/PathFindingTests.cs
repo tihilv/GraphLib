@@ -146,5 +146,56 @@ namespace GraphLibTests
             var output = FormatOutput("7,37,59,82,99,115,133,165,188,197", graph, result);
             Assert.Equal("2599,2610,2947,2052,2367,2399,2029,2442,2505,3068", output);
         }
+        
+       
+        [Fact]
+        public void JohnsonTestFromFile()
+        {
+            var result1 = JohnsonTestFromFile("johnsons_g1.txt");
+            Assert.Equal(long.MaxValue, result1);
+
+            var result2 = JohnsonTestFromFile("johnsons_g2.txt");
+            Assert.Equal(long.MaxValue, result2);
+
+            var result3 = JohnsonTestFromFile("johnsons_g3.txt");
+            Assert.Equal(-19, result3);
+        }
+
+        private long JohnsonTestFromFile(string filename)
+        {
+            var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
+            var path = Path.Combine(location, "..", "..", "..", "data", filename);
+
+            Graph graph = new Graph(JohnsonPathFinder.OptimizedOptions());
+
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (var textReader = new StreamReader(stream, Encoding.ASCII))
+            {
+                textReader.ReadLine();
+                while (!textReader.EndOfStream)
+                {
+                    var str = textReader.ReadLine().Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+                    var fromNode = str[0];
+                    var toNode = str[1];
+                    var length = Int32.Parse(str[2]);
+
+                    graph.AddEdge(fromNode, toNode, length);
+                }
+            }
+
+            JohnsonPathFinder finder = new JohnsonPathFinder(graph);
+            finder.Process();
+
+            long result = long.MaxValue;
+            if (!finder.HasNegativeCycle)
+            foreach (var tailPair in finder.VertexToPathDictionary)
+                foreach (var headPair in tailPair.Value)
+                {
+                    if (result > headPair.Value.Distance)
+                        result = headPair.Value.Distance;
+                }
+
+            return result;
+        }
     }
 }

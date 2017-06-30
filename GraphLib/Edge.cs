@@ -30,7 +30,7 @@ namespace GraphLib
 
         public override string ToString()
         {
-            return Tail.Name + " - " + Head.Name;
+            return $"{Tail.Name} - {Head.Name}: {Length}";
         }
 
         public bool Equals(Edge other)

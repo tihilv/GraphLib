@@ -29,6 +29,8 @@ namespace GraphLib.PathFinding
 
         public void Process(IVertex srcVertex)
         {
+            _vertexToPathDictionary.Clear();
+
             MihHeapRemovable<long, PathDistanceInfo> unobserved = new MihHeapRemovable<long, PathDistanceInfo>(i=>i.Distance);
 
             GetPathDistanceInfo(srcVertex, 0, null);
@@ -103,20 +105,6 @@ namespace GraphLib.PathFinding
         public static GraphOptions OptimizedOptions(IVertexTagFactory vertexTagFactory = null)
         {
             return new GraphOptions(GraphDirection.Directed, VerticesStoreMode.Outcome, GraphPreferedUsage.OptimizedForInsert, false, vertexTagFactory);
-        }
-    }
-
-    public struct PathDistanceInfo
-    {
-        public readonly IVertex Vertex;
-        public readonly long Distance;
-        public readonly IVertex Parent;
-
-        public PathDistanceInfo(IVertex vertex, long score, IVertex parent) : this()
-        {
-            Vertex = vertex;
-            Distance = score;
-            Parent = parent;
         }
     }
 }

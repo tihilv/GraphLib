@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -29,8 +30,8 @@ namespace GraphLibTests
                 {
                     var str = textReader.ReadLine().Trim();
                     var index = str.IndexOf(' ');
-                    var x = double.Parse(str.Substring(0, index));
-                    var y = double.Parse(str.Substring(index + 1));
+                    var x = double.Parse(str.Substring(0, index).Replace(".", CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator));
+                    var y = double.Parse(str.Substring(index + 1).Replace(".", CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator));
 
                     points.Add(new Point(x, y));
                 }

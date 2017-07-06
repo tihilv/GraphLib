@@ -23,18 +23,18 @@ namespace GraphLib.Tsp
 
             TspSubsets subsets = new TspSubsets((byte)vertices.Length);
             TspStorage prevStorage = new TspStorage();
-            prevStorage.SetValue(new TspSubset(1), 0, 0);
+            prevStorage.SetValue(1, 0, 0);
 
             for (byte m = 2; m <= vertices.Length; m++)
             {
                 TspStorage storage = new TspStorage();
 
-                foreach (TspSubset subset in subsets.LengthOf(m))
+                foreach (var subset in subsets.LengthOf(m))
                 {
-                    var s = subset.GetItems().ToArray();
+                    var s = TspSubset.GetItems(subset).ToArray();
                     foreach (byte j in s.Where(v => v != 0))
                     {
-                        var secondSubset = subset.RemoveItem(j);
+                        var secondSubset = TspSubset.RemoveItem(subset, j);
 
                         double minLength = long.MaxValue;
 
@@ -49,11 +49,14 @@ namespace GraphLib.Tsp
                                     minLength = value;
                             }
 
-                        storage.SetValue(subset, j, minLength);
+                        if (minLength != long.MaxValue)
+                            storage.SetValue(subset, j, minLength);
                     }
                 }
 
                 prevStorage = storage;
+                GC.Collect();
+                GC.Collect();
             }
 
             var maxSubset = subsets.GetMaxSubset();
@@ -86,9 +89,9 @@ namespace GraphLib.Tsp
             _storage = new Dictionary<Tuple<long, byte>, double>();
         }
 
-        internal double GetValue(TspSubset subset, byte index)
+        internal double GetValue(long subset, byte index)
         {
-            Tuple<long, byte> key = new Tuple<long, byte>(subset.Value, index);
+            Tuple<long, byte> key = new Tuple<long, byte>(subset, index);
 
             double result;
             if (_storage.TryGetValue(key, out result))
@@ -97,9 +100,9 @@ namespace GraphLib.Tsp
             return long.MaxValue;
         }
 
-        internal void SetValue(TspSubset subset, byte index, double value)
+        internal void SetValue(long subset, byte index, double value)
         {
-            Tuple<long, byte> key = new Tuple<long, byte>(subset.Value, index);
+            Tuple<long, byte> key = new Tuple<long, byte>(subset, index);
 
             _storage[key] = value;
         }
@@ -117,35 +120,21 @@ namespace GraphLib.Tsp
         }
 
 
-        internal IEnumerable<TspSubset> LengthOf(byte size)
+        internal IEnumerable<long> LengthOf(byte size)
         {
-            for (long i = 1; i < Math.Pow(2, _length); i+=2)
+            for (long i = 1; i <= GetMaxSubset(); i+=2)
                 if (TspSubset.NumberOfSetBits(i) == size)
-                    yield return new TspSubset(i);
+                    yield return i;
         }
 
-        internal TspSubset GetMaxSubset()
+        internal long GetMaxSubset()
         {
-            return new TspSubset((long)Math.Pow(2, _length)-1);
+            return (long)Math.Pow(2, _length)-1;
         }
     }
 
-    struct TspSubset
+    static class TspSubset
     {
-        private readonly long _subsetValue;
-
-        public TspSubset(long subsetValue)
-        {
-            _subsetValue = subsetValue;
-        }
-
-        internal long NumberOfSetBits()
-        {
-            return NumberOfSetBits(_subsetValue);
-        }
-
-        internal long Value => _subsetValue;
-
         internal static long NumberOfSetBits(long i)
         {
             i = i - ((i >> 1) & 0x5555555555555555);
@@ -153,9 +142,8 @@ namespace GraphLib.Tsp
             return (((i + (i >> 4)) & 0xF0F0F0F0F0F0F0F) * 0x101010101010101) >> 56;
         }
 
-        public IEnumerable<byte> GetItems()
+        public static IEnumerable<byte> GetItems(long i)
         {
-            long i = _subsetValue;
             byte number = 0;
             while (i > 0)
             {
@@ -167,11 +155,11 @@ namespace GraphLib.Tsp
             }
         }
 
-        public TspSubset RemoveItem(byte position)
+        public static long RemoveItem(long i, byte position)
         {
-            long intValue = _subsetValue;
+            long intValue = i;
             intValue &= ~(1 << position);
-            return new TspSubset(intValue);
+            return intValue;
         }
     }
 }

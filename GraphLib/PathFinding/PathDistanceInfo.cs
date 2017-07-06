@@ -5,10 +5,10 @@ namespace GraphLib.PathFinding
     public struct PathDistanceInfo
     {
         public readonly IVertex Vertex;
-        public readonly long Distance;
+        public readonly double Distance;
         public readonly IVertex Parent;
 
-        public PathDistanceInfo(IVertex vertex, long score, IVertex parent) : this()
+        public PathDistanceInfo(IVertex vertex, double score, IVertex parent) : this()
         {
             Vertex = vertex;
             Distance = score;

@@ -20,7 +20,7 @@ namespace GraphLib.PathFinding
             _vertexToPathDictionary = new Dictionary<IVertex, PathDistanceInfo>();
         }
 
-        PathDistanceInfo GetPathDistanceInfo(IVertex vertex, long score, IVertex parent)
+        PathDistanceInfo GetPathDistanceInfo(IVertex vertex, double score, IVertex parent)
         {
             var result = new PathDistanceInfo(vertex, score, parent);
             _vertexToPathDictionary[vertex] = result;
@@ -31,7 +31,7 @@ namespace GraphLib.PathFinding
         {
             _vertexToPathDictionary.Clear();
 
-            MihHeapRemovable<long, PathDistanceInfo> unobserved = new MihHeapRemovable<long, PathDistanceInfo>(i=>i.Distance);
+            MihHeapRemovable<double, PathDistanceInfo> unobserved = new MihHeapRemovable<double, PathDistanceInfo>(i=>i.Distance);
 
             GetPathDistanceInfo(srcVertex, 0, null);
 
@@ -78,7 +78,7 @@ namespace GraphLib.PathFinding
 
             while (unobserved.Any())
             {
-                long bestScore = long.MaxValue;
+                double bestScore = long.MaxValue;
                 IVertex nextVertex = null;
                 foreach (var pair in _vertexToPathDictionary)
                     foreach (var edge in pair.Key.GetOutcomeEdges())

@@ -45,17 +45,17 @@ namespace GraphLib
         public Edge[] Edges => _edges.GetEdges().ToArray();
         public int VertexCount => _vertices.Count;
         
-        public void AddEdge(string tailName, string headName, long length = 1)
+        public void AddEdge(string tailName, string headName, double length = 1)
         {
             AddEdge(GetVertex(tailName), GetVertex(headName), length);
         }
 
-        public void AddEdge(IVertexTag tail, IVertexTag head, long length = 1)
+        public void AddEdge(IVertexTag tail, IVertexTag head, double length = 1)
         {
             AddEdge(GetVertex(tail.Name), GetVertex(head.Name), length);
         }
 
-        public void AddEdge(IVertex tail, IVertex head, long length)
+        public void AddEdge(IVertex tail, IVertex head, double length)
         {
             Edge result = new Edge(tail, head, length);
 
@@ -187,13 +187,19 @@ namespace GraphLib
 
         public bool HasEdge(IVertex fromVertex, IVertex toVertex)
         {
-            if (fromVertex.GetOutcomeEdges().Any(e => e.Head == toVertex))
-                return true;
+            return GetEdge(fromVertex, toVertex) != null;
+        }
 
-            if (_graphOptions.Direction == GraphDirection.Undirected && toVertex.GetOutcomeEdges().Any(e => e.Head == fromVertex))
-                return true;
+        public Edge GetEdge(IVertex fromVertex, IVertex toVertex)
+        {
+            var edge = fromVertex.GetOutcomeEdges().FirstOrDefault(e => e.Head == toVertex);
+            if (edge != null)
+                return edge;
 
-            return false;
+            if (_graphOptions.Direction == GraphDirection.Undirected)
+                edge = toVertex.GetOutcomeEdges().FirstOrDefault(e => e.Head == fromVertex);
+
+            return edge;
         }
 
         IEnumerable<IVertex> GetConnectedVertices(IVertex fromVertex)

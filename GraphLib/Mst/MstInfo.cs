@@ -14,7 +14,7 @@ namespace GraphLib.Mst
             Edge = edge;
         }
 
-        public long Length
+        public double Length
         {
             get
             {

@@ -18,13 +18,13 @@ namespace GraphLib.Mst
         }
 
         private readonly List<Edge> _edges;
-        private long _spacing;
+        private double _spacing;
 
         public UnionFind<IVertex> Union => _union;
 
         public List<Edge> Edges => _edges;
 
-        public long Spacing => _spacing;
+        public double Spacing => _spacing;
 
         public void Process(int? leaveClusters = 1)
         {

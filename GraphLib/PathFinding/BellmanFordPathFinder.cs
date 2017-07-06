@@ -25,20 +25,20 @@ namespace GraphLib.PathFinding
             for (int index = 0; index < _graph.VertexCount; index++)
                 vertexPosition[_graph.Vertices[index]] = index;
 
-            long[] aPrev = new long[_graph.VertexCount];
+            double[] aPrev = new double[_graph.VertexCount];
             for (int index = 0; index < aPrev.Length; index++)
                 aPrev[index] = long.MaxValue;
             aPrev[vertexPosition[srcVertex]] = 0;
 
             for (int iteration = 0; iteration < _graph.VertexCount; iteration++)
             {
-                long[] aCurrent = new long[_graph.VertexCount];
+                double[] aCurrent = new double[_graph.VertexCount];
 
                 for (int index = 0; index < _graph.VertexCount; index++)
                 {
                     var v = _graph.Vertices[index];
 
-                    long minValue = aPrev[index];
+                    double minValue = aPrev[index];
                     foreach (Edge edge in v.GetIncomeEdges())
                     {
                         var w = edge.Tail;

@@ -28,7 +28,7 @@ namespace GraphLib.Mst
         {
             _edges.Clear();
             Dictionary<IVertex, MstInfo> vertexToMstDictionary = new Dictionary<IVertex, MstInfo>();
-            MihHeapRemovable<long, MstInfo> unobserved = new MihHeapRemovable<long, MstInfo>(i => i.Length);
+            MihHeapRemovable<double, MstInfo> unobserved = new MihHeapRemovable<double, MstInfo>(i => i.Length);
             HashSet<IVertex> observedVertices = new HashSet<IVertex>();
 
             IVertex srcVertex = _graph.Vertices[0];

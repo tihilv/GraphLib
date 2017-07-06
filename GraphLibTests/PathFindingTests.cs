@@ -161,7 +161,7 @@ namespace GraphLibTests
             Assert.Equal(-19, result3);
         }
 
-        private long JohnsonTestFromFile(string filename)
+        private double JohnsonTestFromFile(string filename)
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
             var path = Path.Combine(location, "..", "..", "..", "data", filename);
@@ -186,7 +186,7 @@ namespace GraphLibTests
             JohnsonPathFinder finder = new JohnsonPathFinder(graph);
             finder.Process();
 
-            long result = long.MaxValue;
+            double result = long.MaxValue;
             if (!finder.HasNegativeCycle)
             foreach (var tailPair in finder.VertexToPathDictionary)
                 foreach (var headPair in tailPair.Value)

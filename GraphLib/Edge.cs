@@ -8,9 +8,9 @@ namespace GraphLib
     {
         public readonly IVertex Tail;
         public readonly IVertex Head;
-        public readonly long Length;
+        public readonly double Length;
 
-        internal Edge(IVertex tail, IVertex head, long length)
+        internal Edge(IVertex tail, IVertex head, double length)
         {
             Tail = tail;
             Head = head;

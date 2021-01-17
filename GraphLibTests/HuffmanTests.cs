@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using GraphLib.Huffman;
-using Xunit;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class HuffmanTests
     {
-        [Fact]
+        [Test]
         public void SimpleTest1()
         {
             List<Literal> literals = new List<Literal>();
@@ -30,7 +30,7 @@ namespace GraphLibTests
         }
 
 
-        [Fact]
+        [Test]
         public void SimpleTest()
         {
             List<Literal> literals = new List<Literal>();
@@ -45,15 +45,15 @@ namespace GraphLibTests
             treeGenerator.Process(literals);
             treeGenerator.FillCodes();
 
-            Assert.Equal(3, treeGenerator.Codes["A"].Length);
-            Assert.Equal(4, treeGenerator.Codes["B"].Length);
-            Assert.Equal(2, treeGenerator.Codes["C"].Length);
-            Assert.Equal(2, treeGenerator.Codes["D"].Length);
-            Assert.Equal(4, treeGenerator.Codes["E"].Length);
-            Assert.Equal(2, treeGenerator.Codes["F"].Length);
+            Assert.AreEqual(3, treeGenerator.Codes["A"].Length);
+            Assert.AreEqual(4, treeGenerator.Codes["B"].Length);
+            Assert.AreEqual(2, treeGenerator.Codes["C"].Length);
+            Assert.AreEqual(2, treeGenerator.Codes["D"].Length);
+            Assert.AreEqual(4, treeGenerator.Codes["E"].Length);
+            Assert.AreEqual(2, treeGenerator.Codes["F"].Length);
         }
 
-        [Fact]
+        [Test]
         public void TestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -80,8 +80,8 @@ namespace GraphLibTests
 
             var min = treeGenerator.Codes.Values.Min(v => v.Length);
             var max = treeGenerator.Codes.Values.Max(v => v.Length);
-            Assert.Equal(9, min);
-            Assert.Equal(19, max);
+            Assert.AreEqual(9, min);
+            Assert.AreEqual(19, max);
         }
     }
 }

@@ -1,18 +1,16 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using GraphLib;
 using GraphLib.Mst;
-using GraphLib.PathFinding;
-using Xunit;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class UnionTests
     {
-        //[Fact]
+        //[Test]
         //public void SimpleTest()
         //{
         //    Graph graph = new Graph(PrimsMstFinder.OptimizedOptions());
@@ -39,7 +37,7 @@ namespace GraphLibTests
         //    Assert.Equal(-29, result);
         //}
 
-        [Fact]
+        [Test]
         public void TestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -65,7 +63,7 @@ namespace GraphLibTests
             KruskalMstFinder detector = new KruskalMstFinder(graph);
             detector.Process(4);
 
-            Assert.Equal(106, detector.Spacing);
+            Assert.AreEqual(106, detector.Spacing);
         }
     }
 }

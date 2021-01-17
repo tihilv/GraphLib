@@ -6,30 +6,30 @@ using System.Reflection;
 using System.Text;
 using GraphLib;
 using GraphLib.Tsp;
-using Xunit;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class TspTests
     {
-        [Fact]
+        [Test]
         public void TestFromFile()
         {
             var graph = GetGraph("tsp1.txt", TspFinder.OptimizedOptions());
 
             TspFinder finder = new TspFinder(graph);
             var result = finder.Process();
-            Assert.Equal(true, Math.Abs(4.41-result) < 0.01);
+            Assert.AreEqual(true, Math.Abs(4.41-result) < 0.01);
         }
 
-        [Fact]
+        [Test]
         public void HeuristicTestFromFile()
         {
             var graph = GetTspPoints("tsp_big.txt");
 
             HeuristicTspFinder finder = new HeuristicTspFinder(graph);
             var result = finder.Process();
-            Assert.Equal(true, Math.Abs(1203406.5012708856 - result) < 0.01);
+            Assert.AreEqual(true, Math.Abs(1203406.5012708856 - result) < 0.01);
         }
 
 

@@ -1,10 +1,10 @@
-﻿using Xunit;
+﻿using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class MinCutTests
     {
-        [Fact]
+        [Test]
         public void SimpleTest()
         {
             

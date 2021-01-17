@@ -1,18 +1,16 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using GraphLib;
 using GraphLib.SccDetection;
-using Xunit;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class SccTests
     {
-        [Fact]
+        [Test]
         public void SimpleTest() 
         {
             Graph graph = new Graph(SccDetector.OptimizedOptions());
@@ -32,13 +30,13 @@ namespace GraphLibTests
             SccDetector detector = new SccDetector(graph);
             var result = detector.Process();
 
-            Assert.Equal(3, result.Count);
-            Assert.Equal(3, result[0].Count);
-            Assert.Equal(3, result[1].Count);
-            Assert.Equal(3, result[2].Count);
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(3, result[0].Count);
+            Assert.AreEqual(3, result[1].Count);
+            Assert.AreEqual(3, result[2].Count);
         }
 
-        [Fact]
+        [Test]
         public void TestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(SccTests).GetTypeInfo().Assembly.Location);
@@ -64,11 +62,11 @@ namespace GraphLibTests
             var result = detector.Process();
             var combined = result.Select(r => r.Count).OrderBy(r=>-r).ToArray();
 
-            Assert.Equal(434821, combined[0]);
-            Assert.Equal(968, combined[1]);
-            Assert.Equal(459, combined[2]);
-            Assert.Equal(313, combined[3]);
-            Assert.Equal(211, combined[4]);
+            Assert.AreEqual(434821, combined[0]);
+            Assert.AreEqual(968, combined[1]);
+            Assert.AreEqual(459, combined[2]);
+            Assert.AreEqual(313, combined[3]);
+            Assert.AreEqual(211, combined[4]);
         }
     }
 }

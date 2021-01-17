@@ -5,14 +5,13 @@ using System.Reflection;
 using System.Text;
 using GraphLib;
 using GraphLib.Mst;
-using GraphLib.PathFinding;
-using Xunit;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class MstTests
     {
-        [Fact]
+        [Test]
         public void SimpleTest()
         {
             Graph graph = new Graph(PrimsMstFinder.OptimizedOptions());
@@ -36,10 +35,10 @@ namespace GraphLibTests
             detector.Process();
             var result = detector.Edges.Sum(i => i.Length);
 
-            Assert.Equal(-29, result);
+            Assert.AreEqual(-29, result);
         }
 
-        [Fact]
+        [Test]
         public void TestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -74,9 +73,9 @@ namespace GraphLibTests
             }
 
             var v = b.Skip(1).Count(t => t == 0);
-            Assert.Equal(0, v);
+            Assert.AreEqual(0, v);
 
-            Assert.Equal(-3612829, result);
+            Assert.AreEqual(-3612829, result);
         }
     }
 }

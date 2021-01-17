@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Xunit;
 using System.Reflection;
 using GraphLib;
 using GraphLib.PathFinding;
 using GraphLib.Vertices;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class PathFindingTests
     {
-        [Fact]
+        [Test]
         public void SimpleDijkstraTest()
         {
             Graph graph = new Graph(DijkstraPathFinder.OptimizedOptions());
@@ -32,13 +32,13 @@ namespace GraphLibTests
             detector.Process(s);
             var result = detector.VertexToPathDictionary;
 
-            Assert.Equal(result[s].Distance, 0);
-            Assert.Equal(result[v].Distance, 1);
-            Assert.Equal(result[w].Distance, 3);
-            Assert.Equal(result[t].Distance, 6);
+            Assert.AreEqual(result[s].Distance, 0);
+            Assert.AreEqual(result[v].Distance, 1);
+            Assert.AreEqual(result[w].Distance, 3);
+            Assert.AreEqual(result[t].Distance, 6);
         }
 
-        [Fact]
+        [Test]
         public void DijkstraTestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -69,7 +69,7 @@ namespace GraphLibTests
             var result = detector.VertexToPathDictionary;
 
             var output = FormatOutput("7,37,59,82,99,115,133,165,188,197", graph, result);
-            Assert.Equal("2599,2610,2947,2052,2367,2399,2029,2442,2505,3068", output);
+            Assert.AreEqual("2599,2610,2947,2052,2367,2399,2029,2442,2505,3068", output);
         }
 
         string FormatOutput(string inputNodeNumbers, Graph graph, Dictionary<IVertex, PathDistanceInfo> data)
@@ -87,7 +87,7 @@ namespace GraphLibTests
             return result.ToString();
         }
 
-        [Fact]
+        [Test]
         public void SimpleBellmanFordTest()
         {
             Graph graph = new Graph(BellmanFordPathFinder.OptimizedOptions());
@@ -107,13 +107,13 @@ namespace GraphLibTests
             detector.Process(s);
             var result = detector.VertexToPathDictionary;
 
-            Assert.Equal(result[s].Distance, 0);
-            Assert.Equal(result[v].Distance, 1);
-            Assert.Equal(result[w].Distance, 3);
-            Assert.Equal(result[t].Distance, 6);
+            Assert.AreEqual(result[s].Distance, 0);
+            Assert.AreEqual(result[v].Distance, 1);
+            Assert.AreEqual(result[w].Distance, 3);
+            Assert.AreEqual(result[t].Distance, 6);
         }
 
-        [Fact]
+        [Test]
         public void BellmanFordTestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -144,21 +144,21 @@ namespace GraphLibTests
             var result = detector.VertexToPathDictionary;
 
             var output = FormatOutput("7,37,59,82,99,115,133,165,188,197", graph, result);
-            Assert.Equal("2599,2610,2947,2052,2367,2399,2029,2442,2505,3068", output);
+            Assert.AreEqual("2599,2610,2947,2052,2367,2399,2029,2442,2505,3068", output);
         }
         
        
-        [Fact]
+        [Test]
         public void JohnsonTestFromFile()
         {
             var result1 = JohnsonTestFromFile("johnsons_g1.txt");
-            Assert.Equal(long.MaxValue, result1);
+            Assert.AreEqual(long.MaxValue, result1);
 
             var result2 = JohnsonTestFromFile("johnsons_g2.txt");
-            Assert.Equal(long.MaxValue, result2);
+            Assert.AreEqual(long.MaxValue, result2);
 
             var result3 = JohnsonTestFromFile("johnsons_g3.txt");
-            Assert.Equal(-19, result3);
+            Assert.AreEqual(-19, result3);
         }
 
         private double JohnsonTestFromFile(string filename)

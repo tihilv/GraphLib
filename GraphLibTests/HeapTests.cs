@@ -4,23 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using GraphLib;
 using GraphLib.Primitives;
-using Xunit;
-using Xunit.Abstractions;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class HeapTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public HeapTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
-        [Fact]
+        [Test]
         public void SimpleTest()
         {
             var input = "32 45 79 52 65 98 25 68 90 92".Split(' ').Select(n => int.Parse(n));
@@ -38,11 +29,11 @@ namespace GraphLibTests
             for (int j = 0; j < numbers.Count; j++)
             {
                 int fromHeap = heap.Extract();
-                Assert.Equal(numbers[j], fromHeap);
+                Assert.AreEqual(numbers[j], fromHeap);
             }
         }
         
-        [Fact]
+        [Test]
         public void RandomizedTest()
         {
             Random random = new Random();
@@ -68,16 +59,15 @@ namespace GraphLibTests
                 }
 
                 numbers.Sort();
-                _output.WriteLine(sb.ToString());
                 for (int j = 0; j < numbers.Count; j++)
                 {
                     int fromHeap = heap.Extract();
-                    Assert.Equal(numbers[j], fromHeap);
+                    Assert.AreEqual(numbers[j], fromHeap);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public void SimpleTestRemovable1()
         {
             var input = "201 2 246 64 23 85 177 134 103 64".Split(' ').Select(n => int.Parse(n));
@@ -99,11 +89,11 @@ namespace GraphLibTests
             for (int j = 0; j < numbers.Count; j++)
             {
                 int fromHeap = heap.Extract();
-                Assert.Equal(numbers[j], fromHeap);
+                Assert.AreEqual(numbers[j], fromHeap);
             }
         }
 
-        [Fact]
+        [Test]
         public void SimpleTestRemovable2()
         {
             var input = "125 146 73 79 116 233 51 111 76 139".Split(' ').Select(n => int.Parse(n));
@@ -125,11 +115,11 @@ namespace GraphLibTests
             for (int j = 0; j < numbers.Count; j++)
             {
                 int fromHeap = heap.Extract();
-                Assert.Equal(numbers[j], fromHeap);
+                Assert.AreEqual(numbers[j], fromHeap);
             }
         }
 
-        [Fact]
+        [Test]
         public void RandomizedTestRemovable()
         {
             Random random = new Random();
@@ -159,8 +149,6 @@ namespace GraphLibTests
                 int indexToRemove = random.Next(0, numbers.Count);
 
                 var itemToRemove = numbers[indexToRemove];
-                _output.WriteLine(itemToRemove.ToString());
-                _output.WriteLine(sb.ToString());
 
                 numbers.Remove(itemToRemove);
                 heap.Remove(itemToRemove);
@@ -169,13 +157,13 @@ namespace GraphLibTests
                 for (int j = 0; j < numbers.Count; j++)
                 {
                     int fromHeap = heap.Extract();
-                    Assert.Equal(numbers[j], fromHeap);
+                    Assert.AreEqual(numbers[j], fromHeap);
                 }
             }
         }
 
 
-        [Fact]
+        [Test]
         public void MedianTestFromFile()
         {
             var location = Path.GetDirectoryName(typeof(HeapTests).GetTypeInfo().Assembly.Location);
@@ -212,7 +200,7 @@ namespace GraphLibTests
                     result = (result + median) % 10000;
                 }
 
-                Assert.Equal(1213, result);
+                Assert.AreEqual(1213, result);
             }
            
         }

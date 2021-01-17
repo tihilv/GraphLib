@@ -4,14 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using NuGet.Packaging;
-using Xunit;
+using NUnit.Framework;
 
 namespace GraphLibTests
 {
     public class HammingDistanceExample
     {
-        [Fact]
+        [Test]
         public void Execute()
         {
             var location = Path.GetDirectoryName(typeof(PathFindingTests).GetTypeInfo().Assembly.Location);
@@ -54,7 +53,7 @@ namespace GraphLibTests
 
                 }
 
-                Assert.Equal(6118, clusters.Count);
+                Assert.AreEqual(6118, clusters.Count);
             }
         }
     }
@@ -83,7 +82,8 @@ namespace GraphLibTests
 
         public void Enlarge(Cluster cluster)
         {
-            _possibleCodes.AddRange(cluster._possibleCodes);
+            foreach (var possibleCode in cluster._possibleCodes)
+                _possibleCodes.Add(possibleCode);
         }
     }
 
